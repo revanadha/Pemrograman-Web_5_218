@@ -1,0 +1,221 @@
+{
+  "platform": "FlipPlay",
+  "tagline": "Platform Streaming Video & Digital Reading Terpadu",
+  "continueWatching": [
+    {
+      "id": "cw-1",
+      "title": "Starlight Horizon",
+      "subtitle": "Musim 1: Episode 12 - Menembus Gerbang",
+      "type": "Video Streaming",
+      "typeBadge": "Anime",
+      "progress": 68,
+      "progressLabel": "16:20 / 24:00",
+      "thumbnail": "./images/starlight-horizon.jpg",
+      "nextAction": "Putar Lanjutan"
+    },
+    {
+      "id": "cw-2",
+      "title": "Blade of Northern Wind",
+      "subtitle": "Bab 45: Tebasan Menembus Badai",
+      "type": "Digital Reader",
+      "typeBadge": "Manga",
+      "progress": 82,
+      "progressLabel": "Halaman 26 / 32",
+      "thumbnail": "./images/blade-northern-wind.jpg",
+      "nextAction": "Lanjut Membaca"
+    },
+    {
+      "id": "cw-3",
+      "title": "Ghost Doctor",
+      "subtitle": "Episode 6: Doctor yang Baik",
+      "type": "Video Streaming",
+      "typeBadge": "Drama",
+      "progress": 45,
+      "progressLabel": "28:10 / 62:00",
+      "thumbnail": "./images/web.1.jpg",
+      "nextAction": "Putar Lanjutan"
+    },
+    {
+      "id": "cw-4",
+      "title": "The Alchemist of White Moon",
+      "subtitle": "Volume 2: Bab 4 - Formula Rahasia",
+      "type": "Digital Reader",
+      "typeBadge": "Novel",
+      "progress": 30,
+      "progressLabel": "Bab 4 / 14",
+      "thumbnail": "./images/alchemist-white-moon.jpg",
+      "nextAction": "Lanjut Membaca"
+    }
+  ],
+  "genres": [
+    {
+      "id": "scifi",
+      "name": "Sci-Fi & Mecha",
+      "itemCount": "24 Judul",
+      "image": "./images/cyber-symphony.jpg"
+    },
+    {
+      "id": "action",
+      "name": "Action & Martial Arts",
+      "itemCount": "38 Judul",
+      "image": "./images/blade-northern-wind.jpg"
+    },
+    {
+      "id": "romance",
+      "name": "Romance & Drama",
+      "itemCount": "29 Judul",
+      "image": "./images/web.1.jpg"
+    },
+    {
+      "id": "fantasy",
+      "name": "Fantasy & Isekai",
+      "itemCount": "42 Judul",
+      "image": "./images/starfall-empress.jpg"
+    }
+  ],
+  "categories": [
+    { "id": "all", "name": "Semua Format", "count": 8 },
+    { "id": "anime", "name": "Anime", "count": 2 },
+    { "id": "drama", "name": "Drama Asia", "count": 2 },
+    { "id": "manga", "name": "Manga Digital", "count": 2 },
+    { "id": "novel", "name": "Light Novel", "count": 2 }
+  ],
+  "catalog": [
+    {
+      "id": "item-1",
+      "title": "Starlight Horizon",
+      "year": "2024",
+      "category": "anime",
+      "categoryLabel": "Anime",
+      "badgeColor": "indigo",
+      "statusBadge": "24 Episode",
+      "rating": "4.9",
+      "genres": "Sci-Fi, Mecha, Adventure",
+      "shortDesc": "Petualangan kru kapal penjelajah menembus gerbang antarbintang demi memecahkan misteri sinyal peradaban kuno.",
+      "fullDesc": "Di masa ketika umat manusia telah mendiami koloni tata surya luar, sebuah suar sinyal misterius aktif dari balik sabuk Kuiper. Kapten Ren dan krunya ditugaskan menyelidiki sinyal tersebut, yang menuntun mereka pada konflik peradaban kuno. Di FlipPlay, kamu dapat menonton serial animasinya dalam kualitas 1080p dan langsung membaca kelanjutan detail teknis mecha di bab manga adaptasinya.",
+      "formatAvailability": "Tersedia Video + Manga",
+      "typeDetail": "Serial Anime (24 Episode)",
+      "formatDetail": "Streaming Video HD, Subtitle Indonesia, Manga Adaptasi Bab 1-60",
+      "poster": "./images/starlight-horizon.jpg"
+    },
+    {
+      "id": "item-2",
+      "title": "Ghost Doctor",
+      "year": "2024",
+      "category": "drama",
+      "categoryLabel": "Drama Asia",
+      "badgeColor": "rose",
+      "statusBadge": "16 Episode",
+      "rating": "4.8",
+      "genres": "Romance, Slice of Life, Mystery",
+      "shortDesc": "Dua dokter dengan kepribadian dan latar belakang yang sangat bertolak belakang.",
+      "fullDesc": "Dua dokter dengan kepribadian dan latar belakang yang sangat bertolak belakang, Cha Young-min (Rain) dan Go Seung-tak (Kim Bum), yang tubuh serta jiwanya bersatu setelah Young-min mengalami kecelakaan dan menjadi roh koma.",
+      "formatAvailability": "Tersedia Drama + Web Novel",
+      "typeDetail": "Drama Seri Asia (16 Episode)",
+      "formatDetail": "Streaming Serial 1080p, Subtitle Indonesia & Inggris, Web Novel Lengkap",
+      "poster": "./images/web.1.jpg"
+    },
+    {
+      "id": "item-3",
+      "title": "Blade of Northern Wind",
+      "year": "2023",
+      "category": "manga",
+      "categoryLabel": "Manga Digital",
+      "badgeColor": "emerald",
+      "statusBadge": "Bab 118 Update",
+      "rating": "4.9",
+      "genres": "Action, Fantasy, Martial Arts",
+      "shortDesc": "Pendekar muda pengembara salju harus bangkit mempertahankan jurus pedang angin dari ancaman serbuan klan bayangan.",
+      "fullDesc": "Ditempa di puncak gunung bersalju abadi, Yuto mewarisi pedang legendaris yang mampu mengendalikan badai kutub. Pertarungan penuh koreografi apik digambar dengan gaya full-color resolusi tinggi. Fitur audio dubbing latar FlipPlay memberikan sensasi membaca komik yang lebih imersif.",
+      "formatAvailability": "Tersedia Full Color & Dub",
+      "typeDetail": "Manga Digital Serial (118 Bab)",
+      "formatDetail": "Manga Vertikal Webtoon & Format Paginasi, Audio Latar Suasana",
+      "poster": "./images/blade-northern-wind.jpg"
+    },
+    {
+      "id": "item-4",
+      "title": "The Alchemist of White Moon",
+      "year": "2024",
+      "category": "novel",
+      "categoryLabel": "Light Novel",
+      "badgeColor": "amber",
+      "statusBadge": "Volume 6 Rilis",
+      "rating": "4.7",
+      "genres": "Fantasy, Isekai, Magic System",
+      "shortDesc": "Seorang peneliti kimia yang terbangun di dunia sihir mendirikan laboratorium rahasia untuk memulihkan kerajaan yang runtuh.",
+      "fullDesc": "Menggabungkan sains modern dengan sistem mantra kuno, novel ini memanjakan pembaca yang menyukai world-building mendalam. Lengkap dengan ilustrasi resmi berwarna dari ilustrator aslinya, serta fitur penyesuaian jenis huruf dan latar baca di e-reader FlipPlay.",
+      "formatAvailability": "E-Book EPUB + Ilustrasi",
+      "typeDetail": "Light Novel Berlisensi (Volume 1-6)",
+      "formatDetail": "EPUB Resmi Berbahasa Indonesia, Galeri Ilustrasi Eksklusif",
+      "poster": "./images/alchemist-white-moon.jpg"
+    },
+    {
+      "id": "item-5",
+      "title": "Cyber Symphony 2099",
+      "year": "2024",
+      "category": "anime",
+      "categoryLabel": "Anime",
+      "badgeColor": "indigo",
+      "statusBadge": "12 Episode",
+      "rating": "4.8",
+      "genres": "Cyberpunk, Music, Thriller",
+      "shortDesc": "Di kota metropolitan masa depan, alunan musik orkestra digital menjadi kunci membongkar konspirasi kecerdasan buatan.",
+      "fullDesc": "Animasi spektakuler dengan penggarapan audio Dolby Atmos. Menceritakan seorang pemain biola sintetis yang menemukan enkripsi pesan rahasia di dalam partitur musik legendaris. Penggemar dapat membaca seri komik prekuelnya langsung di FlipPlay untuk memahami latar belakang kotanya.",
+      "formatAvailability": "Video 4K + Manga Prekuel",
+      "typeDetail": "Serial Anime Orisinal (12 Episode)",
+      "formatDetail": "Streaming 4K Ultra HD & 1080p, Prekuel Manga Eksklusif",
+      "poster": "./images/cyber-symphony.jpg"
+    },
+    {
+      "id": "item-6",
+      "title": "Whispers in the Rain",
+      "year": "2023",
+      "category": "drama",
+      "categoryLabel": "Drama Asia",
+      "badgeColor": "rose",
+      "statusBadge": "12 Episode",
+      "rating": "4.7",
+      "genres": "Melodrama, Youth, Friendship",
+      "shortDesc": "Pertemuan dua sahabat masa kecil di stasiun kereta saat musim hujan menghidupkan kembali impian musik yang sempat padam.",
+      "fullDesc": "Kisah persahabatan penuh haru dengan latar musim hujan di kota pesisir. Dilengkapi naskah cerita digital resmi yang memuat catatan sutradara serta lirik lagu pengiring cerita yang dapat dibaca sambil mendengarkan soundtrack aslinya.",
+      "formatAvailability": "Drama Lengkap + Naskah Asli",
+      "typeDetail": "Serial Drama Asia (12 Episode)",
+      "formatDetail": "Streaming 1080p, Audio Original & Dubbing Indonesia, Catatan Produksi",
+      "poster": "./images/whispers-rain.jpg"
+    },
+    {
+      "id": "item-7",
+      "title": "Dungeon Kitchen Master",
+      "year": "2024",
+      "category": "manga",
+      "categoryLabel": "Manga Digital",
+      "badgeColor": "emerald",
+      "statusBadge": "Bab 84 Update",
+      "rating": "4.8",
+      "genres": "Comedy, Culinary, Fantasy",
+      "shortDesc": "Petualangan memasak bahan monster legendaris di labirin bawah tanah untuk memuaskan lidah para kesatria petualang.",
+      "fullDesc": "Komedi segar yang menggabungkan resep kuliner realistis dengan dunia fantasi dungeon. Digambar dengan detail ilustrasi makanan yang memikat selera. Pembaca dapat memanfaatkan bookmark resep interaktif di aplikasi FlipPlay.",
+      "formatAvailability": "Webtoon Vertikal HD",
+      "typeDetail": "Manga Digital Mingguan (84 Bab)",
+      "formatDetail": "Format Gulir Webtoon Cepat, Bookmark Resep Interaktif",
+      "poster": "./images/dungeon-kitchen.jpg"
+    },
+    {
+      "id": "item-8",
+      "title": "Reign of Starfall Empress",
+      "year": "2023",
+      "category": "novel",
+      "categoryLabel": "Light Novel",
+      "badgeColor": "amber",
+      "statusBadge": "Volume 9 Rilis",
+      "rating": "4.9",
+      "genres": "Historical, Strategy, Drama",
+      "shortDesc": "Intrik politik kekaisaran dan taktik militer seorang putri mahkota dalam mempertahankan tahta dari pemberontakan klan bangsawan.",
+      "fullDesc": "Kisah epik strategi perang dan diplomasi politik dengan riset mendalam. Seri ini telah memenangkan penghargaan novel sastra digital dan menjadi salah satu karya paling banyak dibaca. Versi FlipPlay dilengkapi glosarium istilah kerajaan dan peta interaktif wilayah klan.",
+      "formatAvailability": "Novel EPUB + Peta Interaktif",
+      "typeDetail": "Light Novel Seri Terjemahan (Volume 1-9)",
+      "formatDetail": "Terjemahan Resmi Bahasa Indonesia, Glosarium Istilah & Peta Kerajaan",
+      "poster": "./images/starfall-empress.jpg"
+    }
+  ]
+}
