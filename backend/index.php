@@ -16,6 +16,7 @@ spl_autoload_register(function (string $class): void {
 
 use App\Models\Anime;
 use App\Models\Manga;
+use App\Models\Media;
 use App\Models\User;
 use App\Services\Library;
 
@@ -27,7 +28,7 @@ function printSeparator(): void
 echo PHP_EOL;
 printSeparator();
 echo "   FLIPPLAY BACKEND ENGINE PROTOTYPE - PHP OOP SIMULATION" . PHP_EOL;
-echo "   Modul 3 Pemrograman Web - Laboratorium Informatika UMM" . PHP_EOL;
+echo "   Modul 3 Pemrograman Web  " . PHP_EOL;
 printSeparator();
 
 $library = new Library();

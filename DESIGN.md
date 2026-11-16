@@ -1,15 +1,12 @@
-# Design Specification: FlipPlay Theme Overhaul (Warm Manga Aesthetic)
+# Design Specification: FlipPlay Theme (Kobalt & Kertas Koran)
 
 ## 1. Executive Summary & Objective
 
-This document defines the comprehensive user interface redesign for the **FlipPlay** (*Watch & Read*) web application.
+This document defines the visual direction for the **FlipPlay** (*Watch & Read*) web application.
 
-* **Current Baseline:** Cyberpunk / dark-mode interface featuring high-contrast obsidian backgrounds (`#0B0E14`), deep navy blues, and electric purple/indigo accents (`#4F46E5`).
-* **Target Redesign:** Inspired by the **NimeGami** warm manga visual style:
-  * An inviting, energetic **Warm Cream & Vibrant Tangerine Orange** color palette.
-  * Subtle layered **monochrome manga sketch / halftone backgrounds** with textured overlays.
-  * Lightweight, milky **frosted glassmorphism** (`backdrop-blur`) replacing rigid opaque containers.
-  * Dynamic, **diagonal split layouts** emphasizing anime character cutouts and hero typography.
+* **Direction:** Newsprint editorial. A warm paper canvas, deep ink typography, cobalt for primary actions, and saffron for highlights.
+* **Identity:** Manga zine meets streaming catalogue. Solid paper cards, visible rules, and hard offset shadows replace glass and glow. Cobalt marks the watch/action layer; muted forest green marks the read layer.
+* **Scope:** Both light and dark themes. Light uses warm newsprint; dark uses a blue-black screening room, not a brown-black inversion.
 
 ---
 
@@ -19,70 +16,63 @@ This document defines the comprehensive user interface redesign for the **FlipPl
 
 | Token Name | Hex / RGBA Value | Semantic Usage |
 | :--- | :--- | :--- |
-| `--color-primary-orange` | `#E87A38` | Primary brand color, hero title highlight, primary action buttons (CTA). |
-| `--color-primary-accent` | `#F39C5A` | Gradient highlights, pill badges, active tabs, rating indicators. |
-| `--color-primary-soft` | `#FFF1E8` | Chip backgrounds, subtle active borders, secondary badge fills. |
-| `--color-bg-base` | `#F6EFE9` | Primary canvas background (warm off-white / newsprint tone). |
-| `--color-bg-contrast` | `#EDE4DC` | Section split backgrounds, footer, secondary layout panels. |
-| `--color-card-glass` | `rgba(255, 255, 255, 0.65)` | Floating glass panels with `backdrop-filter: blur(16px)`. |
-| `--color-text-title` | `#2D231E` | High-contrast headlines and brand identity (warm deep charcoal). |
-| `--color-text-body` | `#5A4D45` | Primary body text, descriptions, and synopsis paragraphs. |
-| `--color-text-muted` | `#7C6E66` | Secondary metadata, inactive navigation labels, timestamps. |
-| `--color-border-subtle` | `rgba(255, 255, 255, 0.55)` | Translucent borders framing glass cards and segmented controls. |
+| `--accent` | `#2E4A8C` | Primary action, links, CTA, active states. |
+| `--accent-soft` | `#DCE4F4` | Active chips, soft callouts, tinted tags. |
+| `--mark` | `#C98A1F` | Saffron highlight for badges, selection, decorative accents. |
+| `--paper` | `#F4F0E6` | Page canvas, warm newsprint. |
+| `--paper-2` | `#EAE4D7` | Alternate section tint and footer groundwork. |
+| `--card` | `#FFFCF5` | Solid card and panel surface. |
+| `--ink` | `#191C24` | Headlines and primary text. |
+| `--ink-2` | `#454A57` | Body text and metadata. |
+| `--muted` | `#626776` | Secondary metadata, captions, timestamps. |
+| `--teal` | `#2F6156` | Reader/manga state and secondary semantic accent. |
+| `--line` | `rgba(25, 28, 36, 0.16)` | Hairline rules and dividers. |
+| `--hard-shadow` | `#191C24` | Offset print shadow on cards and controls. |
 
-### 2.2. Manga Background Layer Architecture
+### 2.2. Surface & Contrast
 
-* **Watermark Layer:** Subtle monochrome manga panels and speedline halftone illustrations placed at `z-index: 0`.
-* **Blend Mode & Transparency:** `mix-blend-mode: multiply` set at `12% - 18%` opacity to provide rich artistic texture without impeding typography legibility.
-* **Diagonal Mask / Split Canvas:** A dynamic diagonal angle (approximately $-8^\circ$ to $-12^\circ$ or split geometric block) on the right hero partition, creating high-contrast framing for full-body anime character renders.
+* **Paper first:** the page is a flat newsprint canvas. Sections alternate between `--paper` and `--paper-2`; cards stay solid `--card`.
+* **Ink lines:** dividers use `--line`, while borders and hard shadows use `--ink` at full strength.
+* **No glass, no glow:** blur and colored glow are not part of the system. Depth comes from offset shadows and visible rules.
+* **Color roles:** cobalt is reserved for action, saffron for highlight, forest green for the read state. Do not spread the accent across every element.
 
 ---
 
 ## 3. Layout & Component Design
 
-### 3.1. Floating Glass Navigation Bar
+### 3.1. Site Header
 
-* **Structure:** Sticky or floating glass header with rounded edges and soft border diffusion.
-* **Brand Logo:** Distinct geometric wordmark with warm charcoal text (`#2D231E`) and an orange accent glyph or playmark (`#E87A38`).
-* **Navigation Links:** Warm muted text (`#7C6E66`) with smooth hover transitions to `#E87A38`, marked with an active dot pill.
-* **Right Call to Action (CTA):** Full-pill gradient button:
-  ```css
-  background: linear-gradient(135deg, #F39C5A 0%, #E87A38 100%);
-  color: #FFFFFF;
-  box-shadow: 0 4px 16px rgba(232, 122, 56, 0.28);
-  border-radius: 9999px;
-  ```
+* **Structure:** Sticky paper header with a 1.5px ink hairline at the bottom. No blur, no floating glass.
+* **Brand Logo:** Geometric playmark in cobalt (`--accent`) with an ink wordmark (`--ink`).
+* **Navigation Links:** Muted ink (`--muted`) that shifts to cobalt on hover. The active destination gets a visible underline, not a glowing dot.
+* **Right Call to Action (CTA):** Solid cobalt button with cream text and a hard ink shadow on hover.
 
-### 3.2. Hero Section (Watch & Read Dual Spotlight)
+### 3.2. Hero Section (Watch & Read Spotlight)
 
 * **Left Column (Typography & Action):**
-  * **Pill Category:** Compact badge in `--color-primary-soft` with uppercase bold text in `--color-primary-orange`.
-  * **Headline:** Large display font (e.g., *Starlight Horizon: Gerbang Antarbintang*), blending solid warm charcoal with an orange keyword gradient.
-  * **Metadata Row:** Rating pill with golden star, publication year, content tags, and resolution indicators.
-  * **Interactive CTA Group:**
-    * *Primary:* Orange gradient pill button ("Watch Now" / "Putar Sekarang").
-    * *Secondary:* Milky frosted-glass pill button with subtle white stroke ("Add to Watchlist" / "+ Daftar Saya").
-* **Right Column (Interactive Preview & Character Cutout):**
-  * **Layered Anime Cutout:** Transparent PNG character illustration overlapping the background manga collage.
-  * **Interactive Interface Simulator:** A floating glass window showcasing the dual-mode player.
+  * **Chapter label:** Small ink tab with a rule, not a pill badge.
+  * **Headline:** Display type in `--ink`, with the key phrase in `--accent`.
+  * **Metadata Row:** Rating, year, tags, and resolution set in `--ink-2` and `--muted`.
+  * **Interactive CTA Group:** Primary cobalt button plus a secondary paper button with an ink border.
+* **Right Column (Interactive Preview):**
+  * **Media Frame:** Solid dark blue-black frame with a 1.5px ink border.
+  * **Dual-Mode Switcher:** Tonton/Baca tabs inside the paper card. Active tab uses cobalt fill and cream text.
+  * **Score Bubble:** Saffron badge (`--mark`) with ink text, anchored to the card corner.
 
-### 3.3. Dual-Mode Interface Window (Streaming + E-Reader Switcher)
+### 3.3. Dual-Mode Interface Window (Watch + E-Reader Switcher)
 
-* **Window Shell:** Soft frosted acrylic container (`rgba(255, 255, 255, 0.72)`) with rounded corners (`border-radius: 24px`) and light top-specular reflection.
+* **Window Shell:** Solid `--card` container with a 1.5px ink border and `--radius-md` corners. No acrylic or specular reflection.
 * **Mode Switcher (Segmented Control):**
-  * **Active Mode:** Solid orange pill fill (`#E87A38`) with white text.
-  * **Inactive Mode:** Transparent fill with muted charcoal text.
-* **Media Frame:** Rounded media container presenting either the video player timeline or dual manga page spread.
-* **Floating Score Bubble:** Circular orange floating badge (`#E87A38`) displaying user scores (e.g., `8.45` or `★ 9.8`) anchored to the card corner.
+  * **Active Mode:** Solid cobalt fill (`--accent`) with cream text.
+  * **Inactive Mode:** Transparent fill with muted ink text.
+* **Media Frame:** Dark frame presenting either the video player timeline or the manga page spread.
 
 ### 3.4. Content Carousels & Grid Posters
 
-* **Poster Cards:**
-  * Corner radius: `rounded-2xl` ($16\text{px} - 20\text{px}$).
-  * Shadow: Soft warm ambient drop-shadow (`box-shadow: 0 12px 28px -6px rgba(180, 140, 120, 0.2)`).
-  * Hover Effect: Gentle vertical lift ($-6\text{px}$) accompanied by increased shadow depth.
-* **Metadata Overlay:** Bottom gradient transitioning from transparent to dark warm umber, ensuring high text contrast for title labels and episode counters.
-* **Quick Bookmark Action:** Translucent icon button positioned at the bottom right corner of each card.
+* **Poster Cards:** `--card` surface, 1.5px ink border, `--radius-md` corners.
+* **Shadow:** Hard offset shadow (`4px 4px 0 var(--hard-shadow)`) only on hover. No soft ambient lift.
+* **Metadata Overlay:** Bottom gradient from dark blue-black to transparent, keeping title and episode labels readable.
+* **Quick Bookmark Action:** Cream icon button with an ink border.
 
 ---
 
@@ -90,10 +80,10 @@ This document defines the comprehensive user interface redesign for the **FlipPl
 
 | Role | Font Family | Weight | Color Token |
 | :--- | :--- | :--- | :--- |
-| **Display / Hero Title** | *Plus Jakarta Sans* / *Outfit* | 800 (Extrabold) | `--color-text-title` + `--color-primary-orange` |
-| **Section Headings** | *Plus Jakarta Sans* | 700 (Bold) | `--color-text-title` |
-| **Body / Descriptions** | *Inter* / *Plus Jakarta Sans* | 400 (Regular) – 500 (Medium) | `--color-text-body` |
-| **Badges, Buttons & Labels**| *Inter* | 600 (Semibold) | `#FFFFFF` / `--color-primary-orange` |
+| **Display / Hero Title** | *Bricolage Grotesque* | 700-800 | `--ink` + `--accent` |
+| **Section Headings** | *Plus Jakarta Sans* | 700 | `--ink` |
+| **Body / Descriptions** | *Plus Jakarta Sans* | 400-500 | `--ink-2` |
+| **Badges, Buttons & Labels** | *Plus Jakarta Sans* | 600-700 | `--on-accent` / `--accent` |
 
 ---
 
@@ -101,29 +91,36 @@ This document defines the comprehensive user interface redesign for the **FlipPl
 
 ```css
 :root {
-  /* Surface & Background Canvas */
-  --bg-app: #F6EFE9;
-  --bg-contrast: #EDE4DC;
-  --bg-surface: #FFFFFF;
-  --bg-glass: rgba(255, 255, 255, 0.65);
-  --bg-glass-heavy: rgba(255, 255, 255, 0.85);
+  /* Paper & Surfaces */
+  --paper: #F4F0E6;
+  --paper-2: #EAE4D7;
+  --paper-3: #DED7C7;
+  --card: #FFFCF5;
 
-  /* Primary Brand Accents */
-  --primary: #E87A38;
-  --primary-light: #F39C5A;
-  --primary-soft: #FFF1E8;
-  --primary-gradient: linear-gradient(135deg, #F39C5A 0%, #E87A38 100%);
+  /* Ink & Typography */
+  --ink: #191C24;
+  --ink-2: #454A57;
+  --muted: #626776;
 
-  /* Typography */
-  --text-title: #2D231E;
-  --text-body: #5A4D45;
-  --text-muted: #7C6E66;
+  /* Cobalt Action */
+  --accent: #2E4A8C;
+  --accent-deep: #23396E;
+  --on-accent: #F9F6EE;
+  --accent-soft: #DCE4F4;
 
-  /* Borders & Shadows */
-  --border-glass: rgba(255, 255, 255, 0.55);
-  --border-subtle: rgba(232, 122, 56, 0.18);
-  --shadow-warm-card: 0 12px 32px rgba(190, 150, 130, 0.18);
-  --shadow-primary-cta: 0 4px 16px rgba(232, 122, 56, 0.28);
+  /* Saffron Highlight */
+  --mark: #C98A1F;
+  --on-mark: #1A1C22;
+
+  /* Reader State */
+  --teal: #2F6156;
+  --on-teal: #F4F0E6;
+  --teal-soft: #D7E6DF;
+
+  /* Lines & Shadows */
+  --line: rgba(25, 28, 36, 0.16);
+  --line-strong: rgba(25, 28, 36, 0.42);
+  --hard-shadow: #191C24;
 }
 ```
 
@@ -131,8 +128,9 @@ This document defines the comprehensive user interface redesign for the **FlipPl
 
 ## 6. Migration & Overhaul Checklist
 
-1. [ ] **Canvas Overhaul:** Shift root theme variables from dark charcoal (`#0B0E14`) to warm cream paper tone (`#F6EFE9`).
-2. [ ] **Manga Texture Implementation:** Add fixed/absolute background vector sketch pattern at $15\%$ opacity with `mix-blend-mode: multiply`.
-3. [ ] **Palette Remapping:** Replace all electric purple/cyan accent tokens with `--primary-gradient` and warm orange tints.
-4. [ ] **Glassmorphism Tuning:** Convert dark frosted cards to white-milky glass cards (`backdrop-blur: 16px`) with light specular borders.
-5. [ ] **Cutout Composition:** Align character PNG cutouts with the angled split background for dynamic visual hierarchy.
+1. [x] **Canvas Overhaul:** Shift root theme variables to warm newsprint paper (`--paper`).
+2. [x] **Palette Remapping:** Replace burnt orange accents with cobalt action and saffron highlights.
+3. [x] **Solid Surfaces:** Use opaque paper cards with hard offset shadows; no glassmorphism or glow.
+4. [x] **Theme Parity:** Verify light newsprint and dark blue-black modes.
+5. [x] **Contrast Check:** Keep body text and actions above WCAG AA in both themes.
+6. [x] **Narrative Trim:** Remove the Genre and Watch & Read sections so the remaining sections carry the story without repetition.

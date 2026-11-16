@@ -2,21 +2,21 @@ document.addEventListener('DOMContentLoaded', () => {
   function showToast(message, type = 'success') {
     const toastContainer = document.getElementById('toastContainer');
     const toast = document.createElement('div');
-    toast.className = 'pointer-events-auto px-4 py-3 rounded-xl bg-[#2D231E] border border-[#E87A38]/50 text-[#F6EFE9] text-xs sm:text-sm font-semibold shadow-xl flex items-center gap-2.5 transform transition-all duration-300 translate-y-2 opacity-0';
+    toast.className = `toast ${type === 'success' ? 'toast--success' : 'toast--info'}`;
 
     toast.innerHTML = `
-      <span class="w-2 h-2 rounded-full ${type === 'success' ? 'bg-emerald-400' : 'bg-[#E87A38]'}"></span>
+      <span class="toast-dot" aria-hidden="true"></span>
       <span>${message}</span>
     `;
 
     toastContainer.appendChild(toast);
     requestAnimationFrame(() => {
-      toast.classList.remove('translate-y-2', 'opacity-0');
+      toast.classList.add('is-visible');
     });
 
     setTimeout(() => {
-      toast.classList.add('opacity-0', 'translate-y-2');
-      setTimeout(() => toast.remove(), 300);
+      toast.classList.remove('is-visible');
+      setTimeout(() => toast.remove(), 250);
     }, 3000);
   }
 
@@ -27,10 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const savedTheme = localStorage.getItem('flipplay-theme');
   if (savedTheme === 'dark') {
     rootHtml.classList.add('dark');
-  } else if (savedTheme === 'light') {
-    rootHtml.classList.remove('dark');
-  } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    rootHtml.classList.add('dark');
   } else {
     rootHtml.classList.remove('dark');
   }
@@ -38,7 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
   themeToggleBtn.addEventListener('click', () => {
     const isDark = rootHtml.classList.toggle('dark');
     localStorage.setItem('flipplay-theme', isDark ? 'dark' : 'light');
-    showToast(isDark ? 'Mode gelap hangat aktif' : 'Mode terang warm cream aktif', 'info');
+    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeColorMeta) themeColorMeta.content = isDark ? '#101319' : '#f4f0e6';
+    showToast(isDark ? 'Mode gelap aktif' : 'Mode terang aktif', 'info');
   });
 
   // Mobile navigation menu toggle
@@ -89,16 +87,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   btnHeroMyList.addEventListener('click', () => {
     isInMyList = !isInMyList;
+    btnHeroMyList.setAttribute('aria-pressed', String(isInMyList));
     if (isInMyList) {
       heroListIcon.textContent = '✓';
-      heroListText.textContent = 'TERSIMPAN';
-      btnHeroMyList.classList.add('border-emerald-500', 'text-emerald-500');
-      showToast('"Starlight Horizon" ditambahkan ke Daftar');
+      heroListText.textContent = 'Tersimpan';
+      btnHeroMyList.classList.add('is-saved');
+      showToast('"Starlight Horizon" ditambahkan ke daftar');
     } else {
       heroListIcon.textContent = '+';
-      heroListText.textContent = 'DAFTAR SAYA';
-      btnHeroMyList.classList.remove('border-emerald-500', 'text-emerald-500');
-      showToast('"Starlight Horizon" dihapus dari Daftar');
+      heroListText.textContent = 'Daftar saya';
+      btnHeroMyList.classList.remove('is-saved');
+      showToast('"Starlight Horizon" dihapus dari daftar');
     }
   });
 
@@ -112,22 +111,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function switchToVideoMode() {
     heroTabVideo.setAttribute('aria-selected', 'true');
-    heroTabVideo.className = 'px-3 py-1.5 rounded-lg bg-[#E87A38] text-white shadow-sm transition-all text-xs font-semibold';
-
     heroTabReader.setAttribute('aria-selected', 'false');
-    heroTabReader.className = 'px-3 py-1.5 rounded-lg text-[#7C6E66] dark:text-[#A8988F] hover:text-[#2D231E] dark:hover:text-white transition-all text-xs font-semibold';
-
     heroVideoView.classList.remove('hidden');
     heroReaderView.classList.add('hidden');
   }
 
   function switchToReaderMode() {
     heroTabReader.setAttribute('aria-selected', 'true');
-    heroTabReader.className = 'px-3 py-1.5 rounded-lg bg-[#E87A38] text-white shadow-sm transition-all text-xs font-semibold';
-
     heroTabVideo.setAttribute('aria-selected', 'false');
-    heroTabVideo.className = 'px-3 py-1.5 rounded-lg text-[#7C6E66] dark:text-[#A8988F] hover:text-[#2D231E] dark:hover:text-white transition-all text-xs font-semibold';
-
     heroReaderView.classList.remove('hidden');
     heroVideoView.classList.add('hidden');
   }
@@ -155,14 +146,14 @@ document.addEventListener('DOMContentLoaded', () => {
     modalTypeBadge.textContent = item.typeDetail || item.categoryLabel;
     modalGenre.textContent = 'Genre: ' + (item.genres || 'Umum');
     modalDesc.textContent = item.fullDesc || item.shortDesc;
-    modalRating.textContent = `${item.rating} / 5.0 (Kurasi Resmi)`;
+    modalRating.textContent = `${item.rating} / 5.0 (data contoh)`;
     modalFormat.textContent = item.formatDetail || item.formatAvailability;
 
-    modalTypeBadge.className = 'inline-block px-2.5 py-1 text-xs font-bold rounded-lg bg-[#E87A38] text-white mb-2';
+    modalTypeBadge.className = 'tag tag--accent mb-2';
     if (btnModalPlay) {
       const isReading = (item.category === 'manga' || item.category === 'novel' || (item.type && item.type.toLowerCase().includes('reader')));
-      btnModalPlay.textContent = isReading ? 'Buka E-Reader Sekarang' : 'Putar Video Sekarang';
-      btnModalPlay.className = 'px-5 py-2 text-xs font-semibold text-white bg-gradient-to-r from-[#F39C5A] to-[#E87A38] hover:brightness-105 rounded-xl transition-all shadow-md shadow-orange-500/20';
+      btnModalPlay.textContent = isReading ? 'Buka e-reader' : 'Putar video';
+      btnModalPlay.className = 'btn btn-primary btn-sm';
     }
 
     contentModal.showModal();
@@ -210,82 +201,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Continue watching renderer
-  const continueWatchingGrid = document.getElementById('continueWatchingGrid');
-
-  function renderContinueWatching(items) {
-    if (!continueWatchingGrid || !items) return;
-    continueWatchingGrid.innerHTML = '';
-
-    items.forEach(item => {
-      const card = document.createElement('article');
-      card.className = 'group bg-white/90 dark:bg-[#221B17]/90 rounded-2xl border border-[#EDE4DC] dark:border-[#382E27] overflow-hidden flex flex-col transition-all hover:border-[#E87A38]/50 hover:shadow-lg hover:-translate-y-1';
-
-      const isReading = item.type.toLowerCase().includes('reader') || item.typeBadge.toLowerCase().includes('manga') || item.typeBadge.toLowerCase().includes('novel');
-      const badgeClass = isReading ? 'bg-[#E87A38] text-white' : 'bg-[#2D231E] text-white dark:bg-[#E87A38]';
-      const playOverlayBg = 'bg-[#E87A38]';
-      const progressBarColor = 'bg-[#E87A38]';
-      const actionLinkColor = 'text-[#E87A38] hover:text-[#F39C5A]';
-
-      card.innerHTML = `
-            <div class="relative aspect-video overflow-hidden bg-[#161210]">
-              <img src="${item.thumbnail}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
-              <div class="absolute inset-0 bg-gradient-to-t from-[#161210]/80 via-transparent to-transparent"></div>
-              
-              <div class="absolute top-3 left-3">
-                <span class="px-2 py-0.5 text-[10px] font-bold rounded ${badgeClass} uppercase tracking-wider backdrop-blur-sm border border-white/20">
-                  ${item.typeBadge}
-                </span>
-              </div>
-
-              <button type="button" class="cw-play-btn absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40 text-white" aria-label="${item.nextAction} ${item.title}">
-                <div class="w-12 h-12 rounded-full ${playOverlayBg} flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
-                  <svg class="w-5 h-5 translate-x-0.5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M8 5v14l11-7z"/>
-                  </svg>
-                </div>
-              </button>
-
-              <span class="absolute bottom-2 right-2 text-[10px] font-mono px-1.5 py-0.5 rounded bg-black/75 text-[#F6EFE9]">
-                ${item.progressLabel}
-              </span>
-            </div>
-
-            <div class="w-full bg-[#EDE4DC] dark:bg-[#382E27] h-1.5 overflow-hidden">
-              <div class="${progressBarColor} h-1.5" style="width: ${item.progress}%"></div>
-            </div>
-
-            <div class="p-4 flex-1 flex flex-col justify-between space-y-2">
-              <div>
-                <h3 class="text-sm font-bold text-[#2D231E] dark:text-[#F6EFE9] group-hover:text-[#E87A38] dark:group-hover:text-[#F39C5A] transition-colors truncate">
-                  ${item.title}
-                </h3>
-                <p class="text-xs text-[#7C6E66] dark:text-[#A8988F] truncate mt-0.5">
-                  ${item.subtitle}
-                </p>
-              </div>
-
-              <div class="pt-2 flex items-center justify-between text-xs">
-                <span class="text-[#7C6E66] dark:text-[#A8988F] text-[11px]">${item.type}</span>
-                <button type="button" class="cw-action-link ${actionLinkColor} font-semibold transition-colors">
-                  ${item.nextAction}
-                </button>
-              </div>
-            </div>
-          `;
-
-      const actionLink = card.querySelector('.cw-action-link');
-      const playBtn = card.querySelector('.cw-play-btn');
-      const triggerAction = () => {
-        showToast(`Melanjutkan: ${item.title} (${item.subtitle})`);
-      };
-      if (actionLink) actionLink.addEventListener('click', triggerAction);
-      if (playBtn) playBtn.addEventListener('click', triggerAction);
-
-      continueWatchingGrid.appendChild(card);
-    });
-  }
-
   // Catalog carousel poster renderer
   let catalogItemsData = [];
 
@@ -295,8 +210,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!items || items.length === 0) {
       catalogCarousel.innerHTML = `
-            <div class="w-full py-12 text-center text-[#7C6E66] dark:text-[#A8988F]">
-              <p class="text-base font-semibold">Tidak ada judul untuk kategori ini.</p>
+            <div class="w-full py-10 text-center">
+              <p class="text-sm font-semibold" style="color: var(--muted)">Tidak ada judul untuk kategori ini.</p>
             </div>
           `;
       return;
@@ -304,66 +219,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     items.forEach(item => {
       const card = document.createElement('article');
-      card.className = 'flex-shrink-0 w-64 sm:w-72 group bg-white/90 dark:bg-[#221B17]/90 rounded-3xl border border-[#EDE4DC] dark:border-[#382E27] overflow-hidden flex flex-col transition-all hover:border-[#E87A38]/60 hover:shadow-2xl hover:-translate-y-2';
-
-      const isReadingItem = item.category === 'manga' || item.category === 'novel';
-      const catBadgeClass = 'bg-[#E87A38] text-white';
-      const viewBtnClass = 'bg-gradient-to-r from-[#F39C5A] to-[#E87A38] hover:brightness-105';
-      const genreColor = 'text-[#E87A38] dark:text-[#F39C5A]';
-      const detailLinkColor = 'text-[#E87A38] hover:text-[#F39C5A]';
+      card.className = 'catalog-card';
 
       card.innerHTML = `
-            <figure class="relative aspect-[3/4] overflow-hidden bg-[#161210]">
-              <img src="${item.poster}" alt="Poster ${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+            <figure class="catalog-poster">
+              <img src="${item.poster}" alt="Poster ${item.title}" width="360" height="480" loading="lazy">
               <figcaption class="sr-only">Poster ${item.title}</figcaption>
-              
-              <div class="absolute top-3 left-3 flex flex-col gap-1 items-start">
-                <span class="px-2.5 py-1 text-xs font-bold rounded-full ${catBadgeClass} shadow">
-                  ${item.categoryLabel}
-                </span>
-                <span class="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-[#161210]/80 text-[#F6EFE9] backdrop-blur-sm">
-                  ${item.statusBadge}
-                </span>
+
+              <div class="catalog-tags">
+                <span class="tag tag--accent">${item.categoryLabel}</span>
+                <span class="tag tag--dark">${item.statusBadge}</span>
               </div>
 
-              <!-- Circular Indicator Button matching referensi.jpg -->
-              <div class="absolute bottom-3 right-3 w-8 h-8 rounded-full bg-[#E87A38] text-white flex items-center justify-center shadow-lg" title="Pilihan Pustaka">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
-                  <circle cx="12" cy="6" r="1.5" fill="currentColor"/>
-                  <circle cx="12" cy="18" r="1.5" fill="currentColor"/>
-                </svg>
-              </div>
-
-              <div class="absolute inset-0 bg-[#161210]/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <button type="button" class="carousel-view-btn px-5 py-2.5 ${viewBtnClass} text-white font-bold text-xs rounded-full shadow-lg transition-transform hover:scale-105">
-                  Lihat Cerita
+              <div class="catalog-hover">
+                <button type="button" class="carousel-view-btn btn btn-primary btn-sm">
+                  Lihat cerita
                 </button>
               </div>
             </figure>
 
-            <div class="p-5 flex-1 flex flex-col justify-between space-y-3">
-              <div class="space-y-1.5">
-                <div class="flex items-center justify-between text-xs text-[#7C6E66] dark:text-[#A8988F]">
-                  <span class="font-medium">${item.year || '2024'}</span>
-                  <span class="text-amber-500 font-bold flex items-center gap-1">★ ${item.rating}</span>
-                </div>
-                <h3 class="text-base font-bold text-[#2D231E] dark:text-[#F6EFE9] group-hover:text-[#E87A38] dark:group-hover:text-[#F39C5A] transition-colors truncate">
-                  ${item.title}
-                </h3>
-                <p class="text-xs ${genreColor} font-medium truncate">
-                  ${item.genres}
-                </p>
-                <p class="text-xs text-[#5A4D45] dark:text-[#D4C5BB] line-clamp-2 mt-1">
-                  ${item.shortDesc}
-                </p>
+            <div class="catalog-body">
+              <div class="catalog-meta">
+                <span>${item.year || '2024'}</span>
+                <span>${item.formatAvailability}</span>
               </div>
-
-              <div class="pt-3 border-t border-[#EDE4DC] dark:border-[#382E27] flex items-center justify-between text-[11px] text-[#7C6E66] dark:text-[#A8988F]">
-                <span class="truncate font-medium">${item.formatAvailability}</span>
-                <button type="button" class="carousel-detail-link ${detailLinkColor} font-bold">
-                  Detail Cerita
-                </button>
+              <h3 class="catalog-title">${item.title}</h3>
+              <p class="catalog-genre">${item.genres}</p>
+              <p class="catalog-desc">${item.shortDesc}</p>
+              <div class="catalog-foot">
+                <span>${item.categoryLabel}</span>
+                <button type="button" class="carousel-detail-link link-underline">Detail cerita</button>
               </div>
             </div>
           `;
@@ -386,10 +271,8 @@ document.addEventListener('DOMContentLoaded', () => {
       button.addEventListener('click', () => {
         const filterValue = button.getAttribute('data-filter');
 
-        filterButtons.forEach(btn => {
-          btn.className = 'filter-btn px-4 py-2 rounded-full text-xs font-bold transition-all bg-white dark:bg-[#221B17] text-[#5A4D45] dark:text-[#D4C5BB] hover:bg-[#FFF1E8] dark:hover:bg-[#2B221D] border border-[#EDE4DC] dark:border-[#382E27] focus-visible:ring-2 focus-visible:ring-[#E87A38]';
-        });
-        button.className = 'filter-btn active-filter px-4 py-2 rounded-full text-xs font-bold transition-all shadow-sm bg-[#E87A38] text-white border border-[#E87A38] focus-visible:ring-2 focus-visible:ring-[#E87A38]';
+        filterButtons.forEach(btn => btn.classList.remove('is-active'));
+        button.classList.add('is-active');
 
         if (filterValue === 'all') {
           renderCarousel(catalogItemsData);
@@ -422,16 +305,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Genre card clicks filter catalog
-  const genreCards = document.querySelectorAll('.genre-card');
-  genreCards.forEach(card => {
-    card.addEventListener('click', () => {
-      const genreTitle = card.querySelector('span')?.textContent || 'Genre Terpilih';
-      showToast(`Menampilkan kurasi untuk ${genreTitle}`);
-      document.getElementById('katalog').scrollIntoView({ behavior: 'smooth' });
-    });
-  });
-
   // 9. LOAD JSON DATA ASYNCHRONOUSLY
   async function loadAllData() {
     try {
@@ -439,7 +312,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!response.ok) response = await fetch('./data.json');
       if (response.ok) {
         const jsonData = await response.json();
-        renderContinueWatching(jsonData.continueWatching);
         catalogItemsData = jsonData.catalog || [];
         renderCarousel(catalogItemsData);
         setupCategoryFilter();
@@ -555,7 +427,6 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         ]
       };
-      renderContinueWatching(fallbackData.continueWatching);
       catalogItemsData = fallbackData.catalog;
       renderCarousel(catalogItemsData);
       setupCategoryFilter();
@@ -587,6 +458,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const errorMessage = document.getElementById('errorMessage');
   const errorConsent = document.getElementById('errorConsent');
 
+  function setFieldError(input, hasError) {
+    input.classList.toggle('is-invalid', hasError);
+    input.setAttribute('aria-invalid', hasError ? 'true' : 'false');
+  }
+
   function validateEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
@@ -595,57 +471,34 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     let isValid = true;
 
-    if (!inputName.value.trim() || inputName.value.trim().length < 3) {
-      errorFullName.classList.remove('hidden');
-      inputName.classList.add('border-rose-500');
-      isValid = false;
-    } else {
-      errorFullName.classList.add('hidden');
-      inputName.classList.remove('border-rose-500');
-    }
+    const nameInvalid = !inputName.value.trim() || inputName.value.trim().length < 3;
+    setFieldError(inputName, nameInvalid);
+    errorFullName.classList.toggle('hidden', !nameInvalid);
+    if (nameInvalid) isValid = false;
 
-    if (!validateEmail(inputEmail.value.trim())) {
-      errorEmail.classList.remove('hidden');
-      inputEmail.classList.add('border-rose-500');
-      isValid = false;
-    } else {
-      errorEmail.classList.add('hidden');
-      inputEmail.classList.remove('border-rose-500');
-    }
+    const emailInvalid = !validateEmail(inputEmail.value.trim());
+    setFieldError(inputEmail, emailInvalid);
+    errorEmail.classList.toggle('hidden', !emailInvalid);
+    if (emailInvalid) isValid = false;
 
-    if (!selectCategory.value) {
-      errorCategory.classList.remove('hidden');
-      selectCategory.classList.add('border-rose-500');
-      isValid = false;
-    } else {
-      errorCategory.classList.add('hidden');
-      selectCategory.classList.remove('border-rose-500');
-    }
+    const categoryInvalid = !selectCategory.value;
+    setFieldError(selectCategory, categoryInvalid);
+    errorCategory.classList.toggle('hidden', !categoryInvalid);
+    if (categoryInvalid) isValid = false;
 
-    if (!inputSubject.value.trim()) {
-      errorSubject.classList.remove('hidden');
-      inputSubject.classList.add('border-rose-500');
-      isValid = false;
-    } else {
-      errorSubject.classList.add('hidden');
-      inputSubject.classList.remove('border-rose-500');
-    }
+    const subjectInvalid = !inputSubject.value.trim();
+    setFieldError(inputSubject, subjectInvalid);
+    errorSubject.classList.toggle('hidden', !subjectInvalid);
+    if (subjectInvalid) isValid = false;
 
-    if (!textareaMessage.value.trim() || textareaMessage.value.trim().length < 10) {
-      errorMessage.classList.remove('hidden');
-      textareaMessage.classList.add('border-rose-500');
-      isValid = false;
-    } else {
-      errorMessage.classList.add('hidden');
-      textareaMessage.classList.remove('border-rose-500');
-    }
+    const messageInvalid = !textareaMessage.value.trim() || textareaMessage.value.trim().length < 10;
+    setFieldError(textareaMessage, messageInvalid);
+    errorMessage.classList.toggle('hidden', !messageInvalid);
+    if (messageInvalid) isValid = false;
 
-    if (!checkboxConsent.checked) {
-      errorConsent.classList.remove('hidden');
-      isValid = false;
-    } else {
-      errorConsent.classList.add('hidden');
-    }
+    const consentInvalid = !checkboxConsent.checked;
+    errorConsent.classList.toggle('hidden', !consentInvalid);
+    if (consentInvalid) isValid = false;
 
     if (isValid) {
       btnSubmitContact.disabled = true;
@@ -662,9 +515,9 @@ document.addEventListener('DOMContentLoaded', () => {
         contactForm.classList.add('hidden');
         formSuccessAlert.classList.remove('hidden');
 
-        successMessageDetail.textContent = `Terima kasih, ${senderName}. Pesan Anda mengenai "${senderCategory}" telah kami terima dengan nomor tiket registrasi #FP-${Math.floor(1000 + Math.random() * 9000)}. Tim kami akan segera menghubungi Anda melalui email ${inputEmail.value.trim()}.`;
+        successMessageDetail.textContent = `Terima kasih, ${senderName}. Pesan mengenai "${senderCategory}" hanya dicatat di halaman demo ini. Tidak ada data yang dikirim ke server atau tim FlipPlay.`;
 
-        showToast('Pesan berhasil terkirim ke tim FlipPlay!', 'success');
+        showToast('Simulasi pengiriman selesai', 'success');
         contactForm.reset();
       }, 800);
     }
@@ -756,15 +609,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function getPrimaryAuraBadgeHtml(auras) {
     if (auras.includes('high-energy')) {
-      return '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#E87A38]/15 text-[#E87A38] border border-[#E87A38]/30">High Energy</span>';
+      return '<span class="tag tag--accent">High Energy</span>';
     }
     if (auras.includes('melancholy')) {
-      return '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-sky-500/15 text-sky-600 dark:text-sky-400 border border-sky-500/30">Melancholy</span>';
+      return '<span class="tag tag--teal">Melancholy</span>';
     }
     if (auras.includes('binge-mode')) {
-      return '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30">Binge Mode</span>';
+      return '<span class="tag tag--ink">Binge Mode</span>';
     }
-    return '<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">Wholesome</span>';
+    return '<span class="tag tag--light-outline">Wholesome</span>';
   }
 
   // Curated in-memory fallback dataset for offline/local environment resilience
@@ -1199,8 +1052,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const posterUrl = localPosterMap[anime.mal_id] || anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url || fallbackLocal;
       const rawTitle = (anime.mal_id === 32281) ? 'Your Name' : (anime.title_english || anime.title || 'Judul Tidak Tersedia');
       const animeTitle = rawTitle.replace(/\.$/, '');
-      const score = anime.score ? `★ ${anime.score}` : 'Belum Ada Skor';
-      const episodes = anime.episodes ? `${anime.episodes} Ep` : 'Ongoing';
+      const score = anime.score ? `Skor ${anime.score}` : 'Tanpa skor';
+      const episodes = anime.episodes ? `${anime.episodes} ep` : 'Ongoing';
       const animeType = anime.type || 'TV';
       const genreLabels = (anime.genres || []).slice(0, 2).map(g => (typeof g === 'string' ? g : g.name)).join(', ') || 'Umum';
       const synopsisSnippet = anime.synopsis
@@ -1210,56 +1063,47 @@ document.addEventListener('DOMContentLoaded', () => {
       const auraBadge = getPrimaryAuraBadgeHtml(auras);
 
       return `
-            <article class="vibe-card group bg-white/90 dark:bg-[#221B17]/90 rounded-2xl border border-[#EDE4DC] dark:border-[#382E27] overflow-hidden shadow-sm hover:shadow-xl hover:border-[#E87A38]/50 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between cursor-pointer" data-id="${anime.mal_id}">
-              <div>
-                <div class="relative aspect-[3/4] bg-[#161210] overflow-hidden">
-                  <img
-                    src="${posterUrl}"
-                    alt="${animeTitle}"
-                    loading="lazy"
-                    referrerpolicy="no-referrer"
-                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    onerror="this.src='${fallbackLocal}'"
-                  />
-                  <div class="absolute inset-0 bg-gradient-to-t from-[#161210]/80 via-transparent to-transparent"></div>
+            <article class="vibe-card" data-id="${anime.mal_id}">
+              <div class="vibe-poster">
+                <img
+                  src="${posterUrl}"
+                  alt="${animeTitle}"
+                  width="300"
+                  height="400"
+                  loading="lazy"
+                  referrerpolicy="no-referrer"
+                  onerror="this.src='${fallbackLocal}'"
+                />
+                <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(10,13,18,.82), rgba(10,13,18,.02) 58%)"></div>
 
-                  <div class="absolute top-3 left-3 flex items-center gap-1.5">
-                    <span class="px-2 py-0.5 rounded bg-[#161210]/80 text-[#F6EFE9] text-[11px] font-bold uppercase tracking-wider backdrop-blur-sm">
-                      ${animeType} • ${episodes}
-                    </span>
-                  </div>
-
-                  <div class="absolute top-3 right-3">
-                    <span class="px-2 py-0.5 rounded bg-[#E87A38] text-white text-[11px] font-extrabold shadow">
-                      ${score}
-                    </span>
-                  </div>
-
-                  <div class="absolute bottom-3 left-3 right-3 flex items-center justify-between">
-                    ${auraBadge}
-                    <span class="text-[10px] text-[#F6EFE9]/90 font-medium truncate max-w-[50%]">
-                      ${genreLabels}
-                    </span>
-                  </div>
+                <div class="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5">
+                  <span class="tag tag--dark">${animeType} &middot; ${episodes}</span>
                 </div>
 
-                <div class="p-4 space-y-2">
-                  <h3 class="font-bold text-sm sm:text-base text-[#2D231E] dark:text-[#F6EFE9] line-clamp-1 group-hover:text-[#E87A38] dark:group-hover:text-[#F39C5A] transition-colors" title="${animeTitle}">
-                    ${animeTitle}
-                  </h3>
-                  <p class="text-xs text-[#5A4D45] dark:text-[#D4C5BB] line-clamp-2 leading-relaxed">
-                    ${synopsisSnippet}
-                  </p>
+                <div class="absolute top-2.5 right-2.5">
+                  <span class="tag tag--accent">${score}</span>
+                </div>
+
+                <div class="absolute bottom-2.5 left-2.5 right-2.5 flex items-end justify-between gap-2">
+                  ${auraBadge}
+                  <span class="vibe-genre text-[10px] font-semibold truncate max-w-[52%]" style="color: var(--inverse-text)">
+                    ${genreLabels}
+                  </span>
                 </div>
               </div>
 
-              <div class="p-4 pt-0">
+              <div class="vibe-body">
+                <h3 class="vibe-title" title="${animeTitle}">${animeTitle}</h3>
+                <p class="vibe-desc">${synopsisSnippet}</p>
+              </div>
+
+              <div class="p-3 pt-0">
                 <button
                   type="button"
-                  class="btn-open-vibe-detail w-full py-2 px-3 text-xs font-semibold rounded-xl bg-[#FFF1E8] dark:bg-[#2B221D] text-[#E87A38] dark:text-[#F39C5A] hover:bg-[#E87A38] hover:text-white dark:hover:bg-[#E87A38] dark:hover:text-white border border-[#E87A38]/20 hover:border-transparent transition-all shadow-sm"
+                  class="btn-open-vibe-detail btn btn-secondary btn-sm w-full"
                   data-id="${anime.mal_id}"
                 >
-                  Lihat Detail Cerita
+                  Lihat detail
                 </button>
               </div>
             </article>
@@ -1270,10 +1114,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const vibeCards = vibeGridContainer.querySelectorAll('.vibe-card');
     vibeCards.forEach(card => {
-      card.addEventListener('click', () => {
-        const malId = Number(card.getAttribute('data-id'));
-        openVibeDetailModal(malId);
-      });
+      const detailBtn = card.querySelector('.btn-open-vibe-detail');
+      if (detailBtn) {
+        detailBtn.addEventListener('click', () => {
+          openVibeDetailModal(Number(detailBtn.getAttribute('data-id')));
+        });
+      }
     });
   }
 
@@ -1307,7 +1153,7 @@ document.addEventListener('DOMContentLoaded', () => {
     vibeModalImage.onerror = () => { vibeModalImage.src = fallbackLocal; };
     vibeModalImage.alt = anime.title;
     vibeModalType.textContent = anime.type || 'TV';
-    vibeModalScore.textContent = anime.score ? `★ ${anime.score}` : 'Skor: -';
+    vibeModalScore.textContent = anime.score ? `Skor ${anime.score}` : 'Skor: -';
     vibeModalEpisodes.textContent = anime.episodes ? `${anime.episodes} Episode` : 'Masih Berjalan (Ongoing)';
     vibeModalStudio.textContent = (anime.studios && anime.studios[0]?.name) || 'Studio Belum Terdaftar';
     vibeModalStatus.textContent = anime.status || 'Finished Airing';
@@ -1323,9 +1169,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const genresList = (anime.genres || []).map(g => {
       const name = typeof g === 'string' ? g : g.name;
-      return `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#FFF1E8] text-[#E87A38] dark:bg-[#2B221D] dark:text-[#F39C5A] border border-[#E87A38]/20">${name}</span>`;
+      return `<span class="tag tag--outline">${name}</span>`;
     }).join('');
-    vibeModalGenres.innerHTML = genresList || '<span class="text-xs text-[#7C6E66]">Tidak ada kategori</span>';
+    vibeModalGenres.innerHTML = genresList || '<span class="text-xs" style="color: var(--muted)">Tidak ada kategori</span>';
 
     vibeDetailModal.showModal();
   }
@@ -1358,11 +1204,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Aura discovery buttons event handler
   auraButtons.forEach(btn => {
     btn.addEventListener('click', () => {
-      auraButtons.forEach(b => {
-        b.className = 'aura-btn px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-[#221B17] text-[#5A4D45] dark:text-[#D4C5BB] border border-[#EDE4DC] dark:border-[#382E27] hover:border-[#E87A38]/50 hover:text-[#E87A38]';
-      });
-
-      btn.className = 'aura-btn active px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-[#E87A38] text-white shadow-sm border border-[#E87A38]';
+      auraButtons.forEach(b => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
 
       activeAura = btn.getAttribute('data-aura');
       filterAndRenderVibeGrid();
@@ -1377,12 +1220,10 @@ document.addEventListener('DOMContentLoaded', () => {
     vibeClearSearchBtn.classList.add('hidden');
     activeAura = 'all';
 
-    auraButtons.forEach(b => {
-      b.className = 'aura-btn px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-white dark:bg-[#221B17] text-[#5A4D45] dark:text-[#D4C5BB] border border-[#EDE4DC] dark:border-[#382E27] hover:border-[#E87A38]/50 hover:text-[#E87A38]';
-    });
+    auraButtons.forEach(b => b.classList.remove('is-active'));
     const allBtn = document.querySelector('.aura-btn[data-aura="all"]');
     if (allBtn) {
-      allBtn.className = 'aura-btn active px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-[#E87A38] text-white shadow-sm border border-[#E87A38]';
+      allBtn.classList.add('is-active');
     }
 
     filterAndRenderVibeGrid();
