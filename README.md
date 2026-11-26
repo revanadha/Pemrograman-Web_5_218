@@ -1,55 +1,48 @@
 # FlipPlay REST API — Modul 4 (Laravel 12)
 
-Prototipe REST API untuk studi kasus **FlipPlay** menggunakan **Laravel 12**, Eloquent ORM (relasi Many-to-Many), Form Request Validation, dan API Resource (`whenLoaded`).
+Repositori ini berisi implementasi prototipe **REST API** untuk studi kasus **FlipPlay** (platform katalog anime dan manga) menggunakan **Laravel 12**, sesuai ketentuan tugas **Demo Modul 4 Pemrograman Web**.
 
-## Persiapan Database (MySQL via XAMPP)
+---
 
-1. Buka **XAMPP Control Panel**, lalu klik **Start** pada service **MySQL**.
-2. Buat database bernama `flipplay_db` di phpMyAdmin (`http://localhost/phpmyadmin`) atau jalankan perintah SQL `CREATE DATABASE flipplay_db;`.
-3. Pastikan konfigurasi `.env` sudah sesuai:
-   ```env
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=flipplay_db
-   DB_USERNAME=root
-   DB_PASSWORD=
-   ```
-4. Jalankan migrasi dan seeder:
+## 1. Gambaran Umum & Fitur Utama
+
+- **Katalog Media (`Media`)**: Pengelolaan data anime dan manga beserta atribut metadata (judul, tipe, genre, rating, tahun rilis, kreator, jumlah unit, dan status) dengan dukungan pencarian dan filter.
+- **Relasi Many-to-Many (`User` ↔ `Media`)**: Setiap pengguna dapat menyimpan banyak media ke dalam koleksinya, dan satu media dapat dikoleksi oleh banyak pengguna melalui tabel pivot `media_user`.
+- **Validasi Terpisah (Form Request)**: Validasi input dipisahkan ke dalam class Form Request (`StoreMediaRequest`, `UpdateMediaRequest`, dan `AddToCollectionRequest`).
+- **Transformasi Respons (API Resource)**: Format respons JSON diseragamkan melalui `MediaResource` dan `UserResource` dengan *conditional eager loading* (`whenLoaded`).
+- **Pengujian Otomatis (Feature Test)**: Dilengkapi pengujian otomatis pada `FlipPlayApiTest` untuk memverifikasi perilaku utama API.
+
+---
+
+## 2. Struktur Utama Proyek
+
+```text
+MODUL 4(DEMO)/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/Api/       # MediaController & UserCollectionController
+│   │   ├── Requests/              # Validasi input (Form Request)
+│   │   └── Resources/             # Transformasi respons JSON (API Resource)
+│   └── Models/                    # Model Eloquent (User & Media)
+├── database/
+│   ├── migrations/                # Skema tabel users, media, dan pivot media_user
+│   └── seeders/                   # Data awal (DatabaseSeeder)
+├── routes/
+│   └── api.php                    # Definisi route REST API
+└── tests/
+    └── Feature/FlipPlayApiTest.php
+```
+
+---
+
+## 3. Cara Menjalankan
+
+1. Salin file `.env.example` menjadi `.env`, lalu sesuaikan konfigurasi koneksi database MySQL lokal.
+2. Jalankan migrasi dan seeder untuk membuat tabel serta data awal:
    ```bash
    php artisan migrate:fresh --seed
    ```
-5. Jalankan server Laravel:
+3. Jalankan server pengembangan Laravel:
    ```bash
    php artisan serve
    ```
-   API aktif di `http://127.0.0.1:8000/api`.
-
-## Daftar Endpoint (`php artisan route:list --path=api`)
-
-| Method | Endpoint | Deskripsi | Status Code |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/api/media` | Daftar media (mendukung `?search=...` & `?type=anime\|manga`) | `200` |
-| `POST` | `/api/media` | Tambah media baru | `201` / `422` |
-| `GET` | `/api/media/{media}` | Detail media + daftar user pengoleksi (`whenLoaded`) | `200` / `404` |
-| `PATCH` | `/api/media/{media}` | Update data media | `200` / `422` |
-| `DELETE` | `/api/media/{media}` | Hapus media | `200` / `404` |
-| `GET` | `/api/users/{user}/collection` | Daftar koleksi media milik user | `200` / `404` |
-| `POST` | `/api/users/{user}/collection` | Tambah media ke koleksi user (`attach`) | `201` / `409` / `422` |
-| `DELETE` | `/api/users/{user}/collection/{media}` | Hapus media dari koleksi user (`detach`) | `200` / `404` |
-
-## Skenario Uji Postman
-
-Tambahkan header `Accept: application/json` dan `Content-Type: application/json`:
-
-1. **GET** `http://127.0.0.1:8000/api/media` $\rightarrow$ Happy path (200).
-2. **GET** `http://127.0.0.1:8000/api/media?search=horizon` $\rightarrow$ Filter judul (200).
-3. **POST** `http://127.0.0.1:8000/api/media` (Body valid) $\rightarrow$ Happy path (201).
-4. **POST** `http://127.0.0.1:8000/api/media` (Judul kosong / duplikat) $\rightarrow$ Failure path (422).
-5. **GET** `http://127.0.0.1:8000/api/media/1` $\rightarrow$ Detail + relasi `collected_by` (200).
-6. **PATCH** `http://127.0.0.1:8000/api/media/1` (`{"rating": 9.5}`) $\rightarrow$ Update (200).
-7. **POST** `http://127.0.0.1:8000/api/users/2/collection` (`{"media_id": 3}`) $\rightarrow$ Attach (201).
-8. **POST** `http://127.0.0.1:8000/api/users/2/collection` (`{"media_id": 3}` lagi) $\rightarrow$ Duplicate failure path (409).
-9. **GET** `http://127.0.0.1:8000/api/users/2/collection` $\rightarrow$ Lihat koleksi user (200).
-10. **DELETE** `http://127.0.0.1:8000/api/users/2/collection/3` $\rightarrow$ Detach (200).
-11. **DELETE** `http://127.0.0.1:8000/api/media/6` $\rightarrow$ Hapus media (200).
